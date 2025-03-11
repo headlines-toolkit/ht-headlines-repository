@@ -1,6 +1,5 @@
 name: ht_headlines_repository
-description: Repository for managing news headlines data
-version: 1.0.0
+description: Repository for managing news headlines data.
 publish_to: none
 repository: https://github.com/Headlines-Toolkit/ht-headlines-repository
 environment:
@@ -11,7 +10,7 @@ dependencies:
     git:
       url: https://github.com/Headlines-Toolkit/ht-headlines-client.git
       ref: main
-  ht_shared: 
+  ht_shared:
     git:
       url: https://github.com/Headlines-Toolkit/ht-shared.git
       ref: main

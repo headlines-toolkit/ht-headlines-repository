@@ -11,9 +11,8 @@ import 'package:rxdart/rxdart.dart';
 /// {@endtemplate}
 class HtHeadlinesRepository {
   /// {@macro ht_headlines_repository}
-  const HtHeadlinesRepository({
-    required HtHeadlinesClient client,
-  }) : _client = client;
+  const HtHeadlinesRepository({required HtHeadlinesClient client})
+    : _client = client;
 
   final HtHeadlinesClient _client;
 
