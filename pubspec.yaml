@@ -8,11 +8,11 @@ environment:
 dependencies:
   ht_headlines_client:
     git:
-      url: https://github.com/Headlines-Toolkit/ht-headlines-client.git
+      url: https://github.com/headlines-toolkit/ht-headlines-client.git
       ref: main
   ht_shared:
     git:
-      url: https://github.com/Headlines-Toolkit/ht-shared.git
+      url: https://github.com/headlines-toolkit/ht-shared.git
       ref: main
   rxdart: ^0.28.0
 
