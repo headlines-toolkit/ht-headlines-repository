@@ -1,7 +1,7 @@
 name: ht_headlines_repository
 description: Repository for managing news headlines data.
 publish_to: none
-repository: https://github.com/Headlines-Toolkit/ht-headlines-repository
+repository: https://github.com/headlines-toolkit/ht-headlines-repository
 environment:
   sdk: ^3.7.0
 
