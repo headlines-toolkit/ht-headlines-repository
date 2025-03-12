@@ -22,7 +22,7 @@ To use this package, add `ht_headlines_repository` as a dependency in your `pubs
 dependencies:
   ht_headlines_repository:
     git:
-      url: https://github.com/Headlines-Toolkit/ht-headlines-client.git
+      url: https://github.com/headlines-toolkit/ht-headlines-repository.git
       ref: main
 ```
 
