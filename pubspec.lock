@@ -110,8 +110,8 @@ packages:
     description:
       path: "."
       ref: main
-      resolved-ref: "215955c2d69c92a0ea85ea82e666afdfeb93b366"
-      url: "https://github.com/Headlines-Toolkit/ht-headlines-client.git"
+      resolved-ref: "3bcb5464e860b27ba9613bf2e4b5f3b24dbd1b39"
+      url: "https://github.com/headlines-toolkit/ht-headlines-client.git"
     source: git
     version: "0.0.0"
   ht_shared:
@@ -119,8 +119,8 @@ packages:
     description:
       path: "."
       ref: main
-      resolved-ref: "287a66d6516c44d27a3526e199e5b50c6095d9cd"
-      url: "https://github.com/Headlines-Toolkit/ht-shared.git"
+      resolved-ref: cd2187ca268080c4fa467dc87ee5e76b7808180c
+      url: "https://github.com/headlines-toolkit/ht-shared.git"
     source: git
     version: "0.0.0"
   http_multi_server:
