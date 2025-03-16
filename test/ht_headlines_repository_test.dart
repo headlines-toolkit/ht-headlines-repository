@@ -249,17 +249,27 @@ void main() {
 
     group('searchHeadlines', () {
       const query = 'searchTerm';
-      final headlines = [
-        const Headline(id: '1', title: 'Headline 1'),
-        const Headline(id: '2', title: 'Headline 2'),
-      ];
+      const limit = 10;
+      const startAfterId = 'abc';
+      final headlines = List.generate(
+        limit,
+        (index) => Headline(id: '$index', title: 'Headline $index'),
+      );
 
       test('successfully searches headlines', () async {
         when(
-          () => client.searchHeadlines(query: query),
+          () => client.searchHeadlines(
+            query: query,
+            limit: limit,
+            startAfterId: startAfterId,
+          ),
         ).thenAnswer((_) async => headlines);
 
-        final result = await repository.searchHeadlines(query: query);
+        final result = await repository.searchHeadlines(
+          query: query,
+          limit: limit,
+          startAfterId: startAfterId,
+        );
 
         expect(
           result,
@@ -267,7 +277,7 @@ void main() {
             PaginatedResponse<Headline>(
               items: headlines,
               cursor: headlines.last.id,
-              hasMore: false,
+              hasMore: true,
             ),
           ),
         );
@@ -275,11 +285,19 @@ void main() {
 
       test('throws HeadlinesSearchException on client failure', () async {
         when(
-          () => client.searchHeadlines(query: query),
+          () => client.searchHeadlines(
+            query: query,
+            limit: limit,
+            startAfterId: startAfterId,
+          ),
         ).thenThrow(const HeadlinesSearchException('Failed to search'));
 
         expect(
-          () => repository.searchHeadlines(query: query),
+          () => repository.searchHeadlines(
+            query: query,
+            limit: limit,
+            startAfterId: startAfterId,
+          ),
           throwsA(isA<HeadlinesSearchException>()),
         );
       });
