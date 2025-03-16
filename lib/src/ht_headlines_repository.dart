@@ -1,4 +1,5 @@
 import 'package:ht_headlines_client/ht_headlines_client.dart';
+import 'package:ht_headlines_client/src/models/headline.dart';
 import 'package:ht_shared/ht_shared.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -134,17 +135,27 @@ class HtHeadlinesRepository {
 
   /// Searches for headlines based on a query string.
   ///
+  /// [limit] - The maximum number of headlines to return per page.
+  /// [startAfterId] - The ID of the headline to start after (for pagination).
+  ///
   /// Returns a [Future] that resolves to a [PaginatedResponse<Headline>].
   /// Throws [HeadlinesSearchException] if searching fails.
   Future<PaginatedResponse<Headline>> searchHeadlines({
     required String query,
+    int? limit,
+    String? startAfterId,
   }) async {
     try {
-      final headlines = await _client.searchHeadlines(query: query);
+      final headlines = await _client.searchHeadlines(
+        query: query,
+        limit: limit,
+        startAfterId: startAfterId,
+      );
+      final hasMore = headlines.length == limit;
       return PaginatedResponse<Headline>(
         items: headlines,
         cursor: headlines.isNotEmpty ? headlines.last.id : null,
-        hasMore: false, // Assuming search doesn't support pagination
+        hasMore: hasMore,
       );
     } on HeadlinesSearchException catch (e) {
       throw HeadlinesSearchException(e.message);
