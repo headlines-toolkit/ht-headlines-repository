@@ -1,6 +1,8 @@
+import 'package:ht_categories_client/ht_categories_client.dart';
+import 'package:ht_countries_client/ht_countries_client.dart';
 import 'package:ht_headlines_client/ht_headlines_client.dart';
-import 'package:ht_headlines_client/src/models/headline.dart';
 import 'package:ht_shared/ht_shared.dart';
+import 'package:ht_sources_client/ht_sources_client.dart';
 import 'package:rxdart/rxdart.dart';
 
 /// {@template ht_headlines_repository}
@@ -17,30 +19,36 @@ class HtHeadlinesRepository {
 
   final HtHeadlinesClient _client;
 
-  /// Fetches a paginated list of headlines.
+  /// Fetches a paginated list of headlines with optional filtering.
+  ///
+  /// Filtering Logic:
+  /// - Within each list (`categories`, `sources`, `eventCountries`), the logic
+  ///   is OR (e.g., headlines matching category A OR category B).
+  /// - Across different filter types, the logic is AND (e.g., headlines
+  ///   matching (category A OR B) AND (source X OR Y)).
   ///
   /// [limit] - The maximum number of headlines to return per page.
   /// [startAfterId] - The ID of the headline to start after (for pagination).
-  /// [category] - Optional category filter.
-  /// [source] - Optional source filter.
-  /// [eventCountry] - Optional event country filter.
+  /// [categories] - Optional list of [Category] objects to filter by.
+  /// [sources] - Optional list of [Source] objects to filter by.
+  /// [eventCountries] - Optional list of [Country] objects to filter by.
   ///
   /// Returns a [Future] that resolves to a [PaginatedResponse<Headline>].
   /// Throws [HeadlinesFetchException] if fetching fails.
   Future<PaginatedResponse<Headline>> getHeadlines({
     int? limit,
     String? startAfterId,
-    String? category,
-    String? source,
-    String? eventCountry,
+    List<Category>? categories,
+    List<Source>? sources,
+    List<Country>? eventCountries,
   }) async {
     try {
       final headlines = await _client.getHeadlines(
         limit: limit,
         startAfterId: startAfterId,
-        category: category,
-        source: source,
-        eventCountry: eventCountry,
+        categories: categories,
+        sources: sources,
+        eventCountries: eventCountries,
       );
       return PaginatedResponse<Headline>(
         items: headlines,
@@ -52,32 +60,39 @@ class HtHeadlinesRepository {
     }
   }
 
-  /// Fetches a stream of paginated headlines that periodically updates.
+  /// Fetches a stream of paginated headlines that periodically updates,
+  /// with optional filtering.
+  ///
+  /// Filtering Logic:
+  /// - Within each list (`categories`, `sources`, `eventCountries`), the logic
+  ///   is OR (e.g., headlines matching category A OR category B).
+  /// - Across different filter types, the logic is AND (e.g., headlines
+  ///   matching (category A OR B) AND (source X OR Y)).
   ///
   /// [limit] - The maximum number of headlines to return per page.
   /// [startAfterId] - The ID of the headline to start after (for pagination).
-  /// [category] - Optional category filter.
-  /// [source] - Optional source filter.
-  /// [eventCountry] - Optional event country filter.
-  /// [interval] - The time interval between updates.
+  /// [categories] - Optional list of [Category] objects to filter by.
+  /// [sources] - Optional list of [Source] objects to filter by.
+  /// [eventCountries] - Optional list of [Country] objects to filter by.
+  /// [interval] - The time interval between stream updates.
   ///
   /// Returns a [Stream] of [PaginatedResponse<Headline>].
-  /// Throws [HeadlinesFetchException] if fetching fails.
+  /// Throws [HeadlinesFetchException] if fetching fails during an update.
   Stream<PaginatedResponse<Headline>> getHeadlinesStream({
     int? limit,
     String? startAfterId,
-    String? category,
-    String? source,
-    String? eventCountry,
+    List<Category>? categories,
+    List<Source>? sources,
+    List<Country>? eventCountries,
     Duration interval = const Duration(minutes: 5),
   }) {
     return TimerStream(null, interval).startWith(null).asyncMap((_) {
       return getHeadlines(
         limit: limit,
         startAfterId: startAfterId,
-        category: category,
-        source: source,
-        eventCountry: eventCountry,
+        categories: categories,
+        sources: sources,
+        eventCountries: eventCountries,
       );
     }).distinct();
   }
