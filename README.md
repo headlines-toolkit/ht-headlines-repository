@@ -167,6 +167,4 @@ void main() async {
 ## Additional information
 
 This package is designed to be data source agnostic, allowing you to easily switch 
-between different backend implementations by providing a different `HtHeadlinesClient`. 
-
-For issues and contributions, please refer to the [GitHub repository](https://github.com/Headlines-Toolkit/ht-headlines-client).
+between different backend implementations by providing a different `HtHeadlinesClient`.
