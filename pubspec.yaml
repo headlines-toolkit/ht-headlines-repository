@@ -6,14 +6,21 @@ environment:
   sdk: ^3.7.0
 
 dependencies:
+  ht_categories_client:
+    git:
+      url: https://github.com/headlines-toolkit/ht-categories-client.git
+  ht_countries_client:
+    git:
+      url: https://github.com/headlines-toolkit/ht-countries-client.git
   ht_headlines_client:
     git:
       url: https://github.com/headlines-toolkit/ht-headlines-client.git
-      ref: main
   ht_shared:
     git:
       url: https://github.com/headlines-toolkit/ht-shared.git
-      ref: main
+  ht_sources_client:
+    git:
+      url: https://github.com/headlines-toolkit/ht-sources-client.git
   rxdart: ^0.28.0
 
 dev_dependencies:
