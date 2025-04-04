@@ -1,19 +1,46 @@
+import 'package:ht_categories_client/ht_categories_client.dart';
+import 'package:ht_countries_client/ht_countries_client.dart';
+import 'package:ht_headlines_client/ht_headlines_client.dart';
 import 'package:ht_headlines_repository/ht_headlines_repository.dart';
 import 'package:ht_shared/ht_shared.dart';
+import 'package:ht_sources_client/ht_sources_client.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
+// Mocks and Fakes
 class MockHtHeadlinesClient extends Mock implements HtHeadlinesClient {}
 
 class FakeHeadline extends Fake implements Headline {}
+
+class FakeCategory extends Fake implements Category {}
+
+class FakeSource extends Fake implements Source {}
+
+class FakeCountry extends Fake implements Country {}
 
 void main() {
   group('HtHeadlinesRepository', () {
     late HtHeadlinesClient client;
     late HtHeadlinesRepository repository;
 
+    // Sample data for testing
+    final category1 = Category(id: 'cat1', name: 'General');
+    final source1 = Source(id: 'src1', name: 'BBC');
+    final country1 = Country(
+      id: 'cty1',
+      isoCode: 'US',
+      name: 'USA',
+      flagUrl: '',
+    );
+    final categoriesList = [category1];
+    final sourcesList = [source1];
+    final eventCountriesList = [country1];
+
     setUpAll(() {
       registerFallbackValue(FakeHeadline());
+      registerFallbackValue(FakeCategory());
+      registerFallbackValue(FakeSource());
+      registerFallbackValue(FakeCountry());
     });
 
     setUp(() {
@@ -24,32 +51,29 @@ void main() {
     group('getHeadlines', () {
       const limit = 10;
       const startAfterId = 'abc';
-      const category = 'general';
-      const source = 'bbc';
-      const eventCountry = 'US';
 
       final headlines = List.generate(
         limit,
         (index) => Headline(id: '$index', title: 'Headline $index'),
       );
 
-      test('successfully fetches headlines', () async {
+      test('successfully fetches headlines with filters', () async {
         when(
           () => client.getHeadlines(
             limit: limit,
             startAfterId: startAfterId,
-            category: category,
-            source: source,
-            eventCountry: eventCountry,
+            categories: categoriesList,
+            sources: sourcesList,
+            eventCountries: eventCountriesList,
           ),
         ).thenAnswer((_) async => headlines);
 
         final result = await repository.getHeadlines(
           limit: limit,
           startAfterId: startAfterId,
-          category: category,
-          source: source,
-          eventCountry: eventCountry,
+          categories: categoriesList,
+          sources: sourcesList,
+          eventCountries: eventCountriesList,
         );
 
         expect(
@@ -67,11 +91,11 @@ void main() {
       test('throws HeadlinesFetchException on client failure', () async {
         when(
           () => client.getHeadlines(
-            limit: limit,
-            startAfterId: startAfterId,
-            category: category,
-            source: source,
-            eventCountry: eventCountry,
+            limit: any(named: 'limit'),
+            startAfterId: any(named: 'startAfterId'),
+            categories: any(named: 'categories'),
+            sources: any(named: 'sources'),
+            eventCountries: any(named: 'eventCountries'),
           ),
         ).thenThrow(const HeadlinesFetchException('Failed to fetch headlines'));
 
@@ -79,9 +103,9 @@ void main() {
           () => repository.getHeadlines(
             limit: limit,
             startAfterId: startAfterId,
-            category: category,
-            source: source,
-            eventCountry: eventCountry,
+            categories: categoriesList,
+            sources: sourcesList,
+            eventCountries: eventCountriesList,
           ),
           throwsA(isA<HeadlinesFetchException>()),
         );
@@ -91,31 +115,28 @@ void main() {
     group('getHeadlinesStream', () {
       const limit = 10;
       const startAfterId = 'abc';
-      const category = 'general';
-      const source = 'bbc';
-      const eventCountry = 'US';
 
       final headlines = List.generate(
         limit,
         (index) => Headline(id: '$index', title: 'Headline $index'),
       );
-      test('successfully fetches headlines stream', () async {
+      test('successfully fetches headlines stream with filters', () async {
         when(
           () => client.getHeadlines(
             limit: limit,
             startAfterId: startAfterId,
-            category: category,
-            source: source,
-            eventCountry: eventCountry,
+            categories: categoriesList,
+            sources: sourcesList,
+            eventCountries: eventCountriesList,
           ),
         ).thenAnswer((_) async => headlines);
 
         final result = repository.getHeadlinesStream(
           limit: limit,
           startAfterId: startAfterId,
-          category: category,
-          source: source,
-          eventCountry: eventCountry,
+          categories: categoriesList,
+          sources: sourcesList,
+          eventCountries: eventCountriesList,
           interval: const Duration(milliseconds: 100),
         );
 
@@ -134,7 +155,7 @@ void main() {
 
     group('getHeadline', () {
       const id = '123';
-      const headline = Headline(id: id, title: 'Headline 1');
+      final headline = Headline(id: id, title: 'Headline 1');
 
       test('successfully fetches a headline', () async {
         when(
@@ -173,7 +194,7 @@ void main() {
     });
 
     group('createHeadline', () {
-      const headline = Headline(id: '123', title: 'Headline 1');
+      final headline = Headline(id: '123', title: 'Headline 1');
 
       test('successfully creates a headline', () async {
         when(
@@ -199,7 +220,7 @@ void main() {
     });
 
     group('updateHeadline', () {
-      const headline = Headline(id: '123', title: 'Headline 1');
+      final headline = Headline(id: '123', title: 'Headline 1');
 
       test('successfully updates a headline', () async {
         when(
