@@ -4,7 +4,7 @@ fetching, creating, updating, deleting, and searching headlines.
 
 ## Features
 
-- **Fetch Headlines:** Retrieve a paginated list of news headlines. Supports optional filtering by category, source, and event country.
+- **Fetch Headlines:** Retrieve a paginated list of news headlines. Supports optional filtering using lists of `Category`, `Source`, and `Country` objects. Filtering logic is OR within each list and AND across different filter types (e.g., (category A OR B) AND (source X OR Y)).
 - **Get Headline by ID:** Fetch a specific headline by its unique identifier.
 - **Create Headline:** Add a new headline to the data source.
 - **Update Headline:** Modify an existing headline in the data source.
@@ -52,11 +52,17 @@ void main() async {
     final headlinesPage1 = await headlinesRepository.getHeadlines(limit: 10);
     print('Page 1: ${headlinesPage1.items}');
 
-    // Fetch headlines with filtering
+    // Fetch headlines with filtering (Example)
+    // Assume you have Category, Source, Country objects available
+    final techCategory = Category(id: 'tech', name: 'Technology');
+    final bbcSource = Source(id: 'bbc', name: 'BBC News');
+    final usCountry = Country(id: 'us', isoCode: 'US', name: 'United States', flagUrl: '');
+
     final filteredHeadlines = await headlinesRepository.getHeadlines(
       limit: 5,
-      category: 'technology',
-      source: 'TechCrunch',
+      categories: [techCategory], // Pass a list of Category objects
+      sources: [bbcSource],      // Pass a list of Source objects
+      eventCountries: [usCountry], // Pass a list of Country objects
     );
     print('Filtered Headlines: ${filteredHeadlines.items}');
 
@@ -86,9 +92,12 @@ void main() async {
   }
 
   // --- createHeadline ---
+  // Assume Category, Source, Country objects are available if needed
+  final generalCategory = Category(id: 'gen', name: 'General');
+
   try {
     final newHeadline = Headline(
-      id: 'new_id',
+      id: 'new_id', // ID is usually generated if not provided
       title: 'New Headline',
       description: 'This is a new headline.',
       url: 'https://example.com/new-headline',
@@ -103,14 +112,23 @@ void main() async {
 
   // --- updateHeadline ---
   try {
-    final updatedHeadline = Headline(
-      id: 'existing_id', // Replace with an existing headline ID
-      title: 'Updated Headline',
+    // Fetch or create the headline object you want to update
+    final existingHeadline = await headlinesRepository.getHeadline(id: 'existing_id');
+    if (existingHeadline == null) {
+      print('Headline to update not found.');
+      return;
+    }
+    final updatedHeadlineData = existingHeadline.copyWith(
+      title: 'Updated Headline Title',
       description: 'This headline has been updated.',
+      // Update other fields as needed, e.g., category
+      category: generalCategory,
     );
     final result =
-        await headlinesRepository.updateHeadline(headline: updatedHeadline);
+        await headlinesRepository.updateHeadline(headline: updatedHeadlineData);
     print('Updated Headline: $result');
+  } on HeadlineNotFoundException catch (e) {
+    print('Error updating headline (not found): $e');
   } on HeadlineUpdateException catch (e) {
     print('Error updating headline: $e');
   }
