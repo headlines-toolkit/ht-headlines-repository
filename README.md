@@ -2,6 +2,8 @@ A Dart package that provides a repository for managing news headlines data.
 It abstracts the data source and provides a clean API for
 fetching, creating, updating, deleting, and searching headlines.
 
+> **Note:** This package is being archived. Please use the successor package [`ht-data-repository`](https://github.com/headlines-toolkit/ht-data-repository) instead.
+
 ## Features
 
 - **Fetch Headlines:** Retrieve a paginated list of news headlines. Supports optional filtering using lists of `Category`, `Source`, and `Country` objects. Filtering logic is OR within each list and AND across different filter types (e.g., (category A OR B) AND (source X OR Y)).
